@@ -101,7 +101,22 @@ npm run build:backend   # PyInstaller → src-tauri/binaries/stash-backend-<targ
 npm run tauri:build     # produces the distributable .app / installer
 ```
 
-`tauri:build` runs `build:backend` automatically. At runtime the app spawns the sidecar, points its SQLite DB at the per-user app-data directory (`STASH_DATA_DIR`), and shuts it down on quit.
+`tauri:build` runs `build:backend` automatically. At runtime the app spawns the sidecar, points its SQLite DB at the per-user app-data directory (`STASH_DATA_DIR`), and shuts it down on quit. Installers land in `desktop/src-tauri/target/release/bundle/`.
+
+> The sidecar is platform-specific — it can't be cross-compiled. Build on each OS/arch you want to ship.
+
+### Releasing to users
+
+Releases are published to **GitHub Releases** via CI (`.github/workflows/release.yml`). Each runner builds its own sidecar, then `tauri build`, and uploads the installers:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0   # → builds macOS arm64 + Intel, creates a draft Release
+```
+
+Users then download the `.dmg` for their Mac from the Releases page.
+
+**Signing:** the workflow ships unsigned by default (macOS users right-click → **Open** the first time). For a Gatekeeper-clean release, add an Apple Developer ID cert and set the `APPLE_*` repo secrets referenced in the workflow to enable notarization. Add the Windows/Linux matrix entries (commented in the workflow) to ship those platforms too.
 
 ---
 

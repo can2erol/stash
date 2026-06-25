@@ -19,6 +19,12 @@ if [[ -z "$TARGET_TRIPLE" ]]; then
   exit 1
 fi
 
+# Windows binaries (and the sidecar name Tauri expects) carry a .exe suffix.
+EXE_EXT=""
+case "$TARGET_TRIPLE" in
+  *windows*) EXE_EXT=".exe" ;;
+esac
+
 echo "▸ Building Stash backend for $TARGET_TRIPLE"
 
 cd "$BACKEND_DIR"
@@ -36,7 +42,7 @@ rm -rf build dist
 pyinstaller --clean --noconfirm stash-backend.spec
 
 mkdir -p "$BIN_DIR"
-cp "dist/stash-backend" "$BIN_DIR/stash-backend-$TARGET_TRIPLE"
-chmod +x "$BIN_DIR/stash-backend-$TARGET_TRIPLE"
+cp "dist/stash-backend${EXE_EXT}" "$BIN_DIR/stash-backend-${TARGET_TRIPLE}${EXE_EXT}"
+chmod +x "$BIN_DIR/stash-backend-${TARGET_TRIPLE}${EXE_EXT}"
 
-echo "✓ Sidecar ready: src-tauri/binaries/stash-backend-$TARGET_TRIPLE"
+echo "✓ Sidecar ready: src-tauri/binaries/stash-backend-${TARGET_TRIPLE}${EXE_EXT}"
