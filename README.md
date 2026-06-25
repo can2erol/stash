@@ -26,7 +26,7 @@
 
 ---
 
-## Using Stash (consumers)
+## Using Stash
 
 Stash ships as a single desktop app — no terminal, no config files.
 
